@@ -1,6 +1,8 @@
 # Multi-Agent Investment Team
 
-Multi-agent investment team powered by Agno and Gemini — 7 AI analysts collaborate across 5 architectures to deploy a $10M equity portfolio
+Multi-agent investment team powered by Agno and Ollama — 7 AI analysts collaborate across 5 architectures to deploy a $10M equity portfolio
+
+> **📖 For detailed local development instructions using Python virtual environment (`venv_agno_investment_team`), see [how_to_use.md](how_to_use.md)**
 
 ## Architecture
 
@@ -13,7 +15,7 @@ AgentOS
 │   ├── Risk Officer          ── YFinance + mandate enforcement
 │   ├── Knowledge Agent       ── RAG search + memo file navigation
 │   ├── Memo Writer           ── Writes investment memos to disk
-│   └── Committee Chair       ── Final decision-maker (Gemini 3.1 Pro)
+│   └── Committee Chair       ── Final decision-maker (Ollama llama3.2)
 │
 ├── Teams (4)
 │   ├── Coordinate Team       ── Dynamic multi-agent orchestration
@@ -43,7 +45,7 @@ cd investment-team
 
 cp example.env .env
 # Edit .env and add your API keys
-# GOOGLE_API_KEY=***
+# OLLAMA_BASE_URL=http://localhost:11434
 # EXA_API_KEY=*** # Optional -- Exa MCP is free (thank you!)
 ```
 
@@ -107,13 +109,13 @@ What does our research say about semiconductors?
 
 | Agent | Model | Tools | Purpose |
 |-------|-------|-------|---------|
-| Market Analyst | Gemini 3 Flash | Exa MCP, YFinance | Macro environment, news, market conditions |
-| Financial Analyst | Gemini 3 Flash | YFinance | Valuation, fundamentals, analyst estimates |
-| Technical Analyst | Gemini 3 Flash | YFinance | Price action, indicators, support/resistance |
-| Risk Officer | Gemini 3 Flash | YFinance | Position sizing, mandate compliance, risk limits |
-| Knowledge Agent | Gemini 3 Flash | FileTools (read-only) | RAG over research library + memo file browsing |
-| Memo Writer | Gemini 3 Flash | FileTools (read/write) | Drafts and saves standardized investment memos |
-| Committee Chair | Gemini 3.1 Pro | None | Final BUY/HOLD/PASS decisions with conviction scores |
+| Market Analyst | Ollama llama3.2 | Exa MCP, YFinance | Macro environment, news, market conditions |
+| Financial Analyst | Ollama llama3.2 | YFinance | Valuation, fundamentals, analyst estimates |
+| Technical Analyst | Ollama llama3.2 | YFinance | Price action, indicators, support/resistance |
+| Risk Officer | Ollama llama3.2 | YFinance | Position sizing, mandate compliance, risk limits |
+| Knowledge Agent | Ollama llama3.2 | FileTools (read-only) | RAG over research library + memo file browsing |
+| Memo Writer | Ollama llama3.2 | FileTools (read/write) | Drafts and saves standardized investment memos |
+| Committee Chair | Ollama llama3.2 | None | Final BUY/HOLD/PASS decisions with conviction scores |
 
 ## Teams
 
@@ -212,23 +214,29 @@ railway open
 
 ## Local Development
 
-```sh
-# Install uv (if needed)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+**📖 For detailed step-by-step instructions, see [how_to_use.md](how_to_use.md)**
 
+Quick start (requires Python 3.12+, Ollama, and PostgreSQL):
+
+```sh
 # Setup virtual environment
-./scripts/venv_setup.sh
-source .venv/bin/activate
+python -m venv venv_agno_investment_team
+source venv_agno_investment_team/bin/activate  # On Windows: .\venv_agno_investment_team\Scripts\Activate.ps1
+
+# Install dependencies
+pip install -r requirements.txt
 
 # Start PostgreSQL (required)
 docker compose up -d investment-team-db
 
-# Load research
+# Load research into knowledge base
 python -m app.load_knowledge
 
 # Run the app
 python -m app.main
 ```
+
+The API will be available at `http://localhost:8000`
 
 ### Format and lint
 
@@ -255,7 +263,7 @@ python -m app.load_knowledge --recreate # Drop and reload all
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `GOOGLE_API_KEY` | Yes | — | Gemini models + embeddings |
+| `OLLAMA_BASE_URL` | Yes | — | Ollama API endpoint (default: http://localhost:11434) |
 | `EXA_API_KEY` | Yes | — | Web search for Market Analyst |
 | `PARALLEL_API_KEY` | No | — | ParallelTools for Market Analyst |
 | `RUNTIME_ENV` | No | `prd` | Set to `dev` for auto-reload |

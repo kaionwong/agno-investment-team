@@ -47,8 +47,8 @@ if ! command -v railway &> /dev/null; then
     exit 1
 fi
 
-if [[ -z "$GOOGLE_API_KEY" ]]; then
-    echo "GOOGLE_API_KEY not set."
+if [[ -z "$OLLAMA_BASE_URL" ]]; then
+    echo "OLLAMA_BASE_URL not set."
     exit 1
 fi
 
@@ -76,7 +76,7 @@ railway add --service investment-team \
     --variables 'DB_DATABASE=${{pgvector.PGDATABASE}}' \
     --variables "DB_DRIVER=postgresql+psycopg" \
     --variables "WAIT_FOR_DB=True" \
-    --variables "GOOGLE_API_KEY=${GOOGLE_API_KEY}" \
+    --variables "OLLAMA_BASE_URL=${OLLAMA_BASE_URL}" \
     --variables "EXA_API_KEY=${EXA_API_KEY}" \
     --variables "PORT=8000"
 

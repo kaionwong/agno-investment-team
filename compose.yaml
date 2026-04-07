@@ -39,8 +39,9 @@ services:
       - DB_DATABASE=${DB_DATABASE:-ai}
       - WAIT_FOR_DB=True
       - PRINT_ENV_ON_LOAD=True
+      # Ollama
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       # API keys
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - EXA_API_KEY=${EXA_API_KEY}
       - PARALLEL_API_KEY=${PARALLEL_API_KEY:-}
     depends_on:

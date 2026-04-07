@@ -8,8 +8,25 @@ Run:
     python -m app.main
 """
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 import os
 from pathlib import Path
+
+# Monkey-patch openai.types.chat to handle missing ChatCompletionAudio in older openai versions
+import sys
+try:
+    from openai.types.chat import ChatCompletionAudio
+except ImportError:
+    # ChatCompletionAudio doesn't exist in openai <1.40, create a dummy
+    class ChatCompletionAudio:
+        pass
+    import openai.types.chat
+    openai.types.chat.ChatCompletionAudio = ChatCompletionAudio
+    sys.modules['openai.types.chat'].ChatCompletionAudio = ChatCompletionAudio
 
 from agno.os import AgentOS
 

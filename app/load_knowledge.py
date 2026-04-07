@@ -6,8 +6,25 @@ Usage:
     python -m app.load_knowledge --recreate  # Drop and reload all
 """
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 import argparse
 from pathlib import Path
+
+# Monkey-patch openai.types.chat to handle missing ChatCompletionAudio in older openai versions
+import sys
+try:
+    from openai.types.chat import ChatCompletionAudio
+except ImportError:
+    # ChatCompletionAudio doesn't exist in openai <1.40, create a dummy
+    class ChatCompletionAudio:
+        pass
+    import openai.types.chat
+    openai.types.chat.ChatCompletionAudio = ChatCompletionAudio
+    sys.modules['openai.types.chat'].ChatCompletionAudio = ChatCompletionAudio
 
 RESEARCH_DIR = Path(__file__).parent.parent / "research"
 

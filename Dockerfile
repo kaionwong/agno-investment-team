@@ -21,6 +21,10 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN uv pip sync requirements.txt --system
 
+# Patch agno to handle missing imports in openai 1.30.0
+COPY scripts/patch_agno_openai.py /tmp/patch_agno_openai.py
+RUN python /tmp/patch_agno_openai.py
+
 COPY --chown=app:app . .
 
 # ---------------------------------------------------------------------------

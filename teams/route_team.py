@@ -6,7 +6,9 @@ Routes each question to exactly one specialist.
 Best for: quick, targeted questions.
 """
 
-from agno.models.google import Gemini
+from os import getenv
+
+from agno.models.ollama import Ollama
 from agno.team import Team, TeamMode
 
 from agents import (
@@ -19,11 +21,13 @@ from agents import (
     technical_analyst,
 )
 
+ollama_base_url = getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
 route_team = Team(
     id="route-team",
     name="Investment Team - Route",
     mode=TeamMode.route,
-    model=Gemini(id="gemini-3.1-pro-preview"),
+    model=Ollama(id="llama3.2", host=ollama_base_url),
     members=[
         market_analyst,
         financial_analyst,

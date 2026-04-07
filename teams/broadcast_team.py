@@ -6,8 +6,10 @@ All four analysts evaluate simultaneously, then Chair synthesizes.
 Best for: high-stakes allocation decisions.
 """
 
+from os import getenv
+
 from agno.learn import LearnedKnowledgeConfig, LearningMachine, LearningMode
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.team import Team, TeamMode
 
 from agents import (
@@ -18,11 +20,13 @@ from agents import (
 )
 from agents.settings import team_learnings
 
+ollama_base_url = getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
 broadcast_team = Team(
     id="broadcast-team",
     name="Investment Team - Broadcast",
     mode=TeamMode.broadcast,
-    model=Gemini(id="gemini-3.1-pro-preview"),
+    model=Ollama(id="llama3.2", host=ollama_base_url),
     members=[
         market_analyst,
         financial_analyst,

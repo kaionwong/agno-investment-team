@@ -6,8 +6,10 @@ Synthesizes analyst inputs into formal investment memos.
 Tools: FileTools (read + save to memos/).
 """
 
+from os import getenv
+
 from agno.agent import Agent
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.tools.file import FileTools
 
 from agents.settings import MEMOS_DIR
@@ -15,6 +17,9 @@ from context import COMMITTEE_CONTEXT
 from db import get_postgres_db
 
 agent_db = get_postgres_db()
+
+# Get Ollama base URL from environment
+ollama_base_url = getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 instructions = f"""\
 You are the Memo Writer on a $10M investment team.
@@ -62,7 +67,7 @@ Examples: `nvda_2026_q1_buy.md`, `aapl_2026_q1_hold.md`, `tsla_2026_q1_pass.md`
 memo_writer = Agent(
     id="memo-writer",
     name="Memo Writer",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="llama3.2", host=ollama_base_url),
     db=agent_db,
     instructions=instructions,
     tools=[

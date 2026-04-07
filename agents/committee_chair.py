@@ -6,15 +6,20 @@ Final decision-maker and capital allocator.
 Model: Gemini 3.1 Pro. Tools: None.
 """
 
+from os import getenv
+
 from agno.agent import Agent
 from agno.learn import LearnedKnowledgeConfig, LearningMachine, LearningMode
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 
 from agents.settings import team_knowledge, team_learnings
 from context import COMMITTEE_CONTEXT
 from db import get_postgres_db
 
 agent_db = get_postgres_db()
+
+# Get Ollama base URL from environment
+ollama_base_url = getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 instructions = f"""\
 You are the Committee Chair of a $10M investment team.
@@ -56,7 +61,7 @@ from all analysts into clear, actionable decisions.
 committee_chair = Agent(
     id="committee-chair",
     name="Committee Chair",
-    model=Gemini(id="gemini-3.1-pro-preview"),
+    model=Ollama(id="llama3.2", host=ollama_base_url),
     db=agent_db,
     instructions=instructions,
     knowledge=team_knowledge,

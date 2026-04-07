@@ -7,7 +7,9 @@ Best for: multi-step portfolio construction and analysis.
 """
 
 from agno.learn import LearnedKnowledgeConfig, LearningMachine, LearningMode
-from agno.models.google import Gemini
+from os import getenv
+
+from agno.models.ollama import Ollama
 from agno.team import Team, TeamMode
 
 from agents import (
@@ -20,11 +22,13 @@ from agents import (
 )
 from agents.settings import team_learnings
 
+ollama_base_url = getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
 task_team = Team(
     id="task-team",
-    name="Investment Team - Tasks",
+    name="Investment Team - Task",
     mode=TeamMode.tasks,
-    model=Gemini(id="gemini-3.1-pro-preview"),
+    model=Ollama(id="llama3.2", host=ollama_base_url),
     members=[
         market_analyst,
         financial_analyst,
